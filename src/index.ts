@@ -1,14 +1,18 @@
-import express, { Request, Response } from 'express';
-
+import express from 'express';
+import  { sequelize,Appconfig }  from './config';
 const app = express();
-const port = 3000;
 
-app.use(express.json()); 
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello from Express + TypeScript!');
-});
+app.use(express.json());
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+app.get('/', (_, res) => res.send('Hello from Express + Sequelize'));
+
+app.listen(Appconfig.PORT, async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('PostgreSQL connection has been established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+  console.log(`🚀 Server running on http://localhost:${Appconfig.PORT}`);
 });
