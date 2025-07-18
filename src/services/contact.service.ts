@@ -1,4 +1,4 @@
-import { Op } from 'sequelize';
+import { Op, InferCreationAttributes } from 'sequelize';
 import db from '../models';
 
 const findRelevantContacts = async (email?: string | null, phoneNumber?: string | null) => {
@@ -18,7 +18,7 @@ const createContact = async ({
   phoneNumber,
   linkedId = null,
   linkPrecedence = 'primary',
-}: InstanceType<typeof db.Contact>) => {
+}: Partial<InferCreationAttributes<InstanceType<typeof db.Contact>>>) => {
   return db.Contact.create({
     email,
     phoneNumber,
@@ -56,9 +56,39 @@ const updateContactToSecondary = async (contact: InstanceType<typeof db.Contact>
   await contact.save();
 };
 
+const identifyContact = async (email?: string, phoneNumber?: string) => {
+  const contacts = await findRelevantContacts(email, phoneNumber);
+
+  if (contacts.length === 0) {
+    const newContact = await createContact({
+      email: email ?? null,
+      phoneNumber: phoneNumber ?? null,
+      linkPrecedence: 'primary',
+    });
+    return consolidateContacts([newContact]);
+  }
+
+  const existingEmails = contacts.map(c => c.email);
+  const existingPhones = contacts.map(c => c.phoneNumber);
+
+  const hasNewEmail = email && !existingEmails.includes(email);
+  const hasNewPhone = phoneNumber && !existingPhones.includes(phoneNumber);
+
+  if (hasNewEmail || hasNewPhone) {
+    const primary = contacts.find(c => c.linkPrecedence === 'primary')!;
+    await createContact({
+      email,
+      phoneNumber,
+      linkPrecedence: 'secondary',
+      linkedId: primary.id,
+    });
+  }
+
+  const updatedContacts = await findRelevantContacts(email, phoneNumber);
+  return consolidateContacts(updatedContacts);
+};
+
+
 export default {
-    findRelevantContacts,
-    createContact,
-    consolidateContacts,
-    updateContactToSecondary
+    identifyContact
 }

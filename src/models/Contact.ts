@@ -1,15 +1,15 @@
-import { DataTypes, Model } from 'sequelize';
+import { DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 import { sequelize } from '../config';
 
-class Contact extends Model {
-    declare id: number;
-    declare email: string | null;
-    declare phoneNumber: string | null;
-    declare linkedId: number | null;
-    declare linkPrecedence: 'primary' | 'secondary';
-    declare createdAt: Date;
-    declare updatedAt: Date;
-    declare deletedAt: Date | null;
+class Contact extends Model<InferAttributes<Contact>,InferCreationAttributes<Contact>> {
+  declare id: CreationOptional<number>;
+  declare email: string | null;
+  declare phoneNumber: string | null;
+  declare linkedId: number | null;
+  declare linkPrecedence: 'primary' | 'secondary';
+  declare createdAt: CreationOptional<Date>;
+  declare updatedAt: CreationOptional<Date>;
+  declare deletedAt: CreationOptional<Date | null>;
 }
 
 Contact.init(
