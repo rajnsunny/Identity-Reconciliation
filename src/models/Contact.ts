@@ -1,7 +1,16 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../config';
 
-class Contact extends Model {}
+class Contact extends Model {
+    declare id: number;
+    declare email: string | null;
+    declare phoneNumber: string | null;
+    declare linkedId: number | null;
+    declare linkPrecedence: 'primary' | 'secondary';
+    declare createdAt: Date;
+    declare updatedAt: Date;
+    declare deletedAt: Date | null;
+}
 
 Contact.init(
   {
@@ -26,6 +35,9 @@ Contact.init(
       type: DataTypes.ENUM('primary', 'secondary'),
       allowNull: false,
     },
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE,
+    deletedAt: DataTypes.DATE
   },
   {
     sequelize,
