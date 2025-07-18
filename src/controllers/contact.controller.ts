@@ -9,7 +9,7 @@ export const identifyContact = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Email or phoneNumber is required' });
     }
 
-    const result = await service.contactServices.identifyContact(email, phoneNumber);
+    const result = await service.identifyService(email, phoneNumber);
     return res.status(200).json({ contact: result });
 
   } catch (error) {

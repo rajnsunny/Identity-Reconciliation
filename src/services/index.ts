@@ -1,7 +1,7 @@
-import contactServices from './contact.service';
+import identifyService from './contact.service';
 
 const services = {
-    contactServices
+    identifyService
 }
 
 export default services;

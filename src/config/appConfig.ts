@@ -7,6 +7,5 @@ const Appconfig = {
     DATABASE_NAME: process.env.DATABASE_NAME || '',
     PORT: process.env.PORT
 }
-console.log(process.env.PORT);
 
 export default Appconfig;
